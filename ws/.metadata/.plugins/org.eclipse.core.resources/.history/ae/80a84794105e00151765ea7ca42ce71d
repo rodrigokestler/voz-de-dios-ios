@@ -1,0 +1,105 @@
+var timeOffset = 0;
+var recordatorio = 0;
+var screen_to_hide = [];
+
+function recordatorio_fn(){
+	var re = window.localStorage.getItem("recordatorio");
+	if(re==null){
+        show_recordatorio();
+    }else{
+    	var now = new Date().getTime();
+		var diff = (now-re)/1000*60*60*24;
+        if(diff >= 1){
+        	show_recordatorio();
+        }
+    }
+}
+
+function mostrar_diapositivas_gratis(){
+	var re = window.localStorage.getItem("fremium"+user_login);
+    if(re==null){
+        show_info('freemium');
+        window.localStorage.setItem("fremium"+user_login,'ya');
+    }
+    console.log('pasa por aqui');
+}
+
+function show_recordatorio(){
+	navigator.notification.confirm(
+        '¿Te gustaría compartir el app con algun contacto?',
+        function onConfirm(buttonIndex) {
+            if(buttonIndex==1){
+                invite();
+            }
+            var re = new Date();
+            re.setDate(re.getDate()+1);
+            window.localStorage.setItem("recordatorio",re.getTime());
+        },            // callback to invoke with index of button pressed
+        'La voz de Dios',           // title
+        ['Si, vamos','Cancelar']     // buttonLabels
+    );
+}
+
+function backbutton(){
+	if(screen_to_hide.length > 0){
+		screen_to_hide.pop().hide();		
+		return false;
+	}
+	
+	console.log(screen_login[0].outerHTML);
+	
+	if(screen_login.hasClass('lefted')) navigator.app.exitApp();
+	return false;
+}
+
+function deviceready() {
+
+	var d = new Date()
+	var n = d.getTimezoneOffset()/60;
+	timeOffset = parseInt(n*-1);
+    console.log(timeOffset);
+
+	window.onerror = function(message, url, lineNumber) {
+        console.log("Error: "+message+" in "+url+" at line "+lineNumber);
+    }
+    
+    document.addEventListener('resume', recordatorio_fn, false);
+    document.addEventListener('backbutton', backbutton, false);
+    
+	
+    FastClick.attach(document.body);
+    pushNotification = window.plugins.pushNotification;
+    setPushes();           
+    /*
+    var el = document.getElementById('screen_timeline');
+    swipedetect(el, function(swipedir){
+        if (swipedir =='right') screen_config.show();
+        else if (swipedir == 'left') screen_config.hide();
+    });
+    
+    el = document.getElementById('screen_config');
+    swipedetect(el, function(swipedir){
+        if (swipedir =='right') screen_config.show();
+        else if (swipedir == 'left') screen_config.hide();
+    });
+    
+    el = document.getElementById('screen_trivia');
+    swipedetect(el, function(swipedir){
+        if (swipedir =='right') screen_config.show();
+        else if (swipedir == 'left') screen_config.hide();
+    });
+    
+    el = document.getElementById('screen_single');
+    swipedetect(el, function(swipedir){
+        if (swipedir =='right') screen_config.show();
+        else if (swipedir == 'left') screen_config.hide();
+    });
+
+    sonido_correcto = new Media('sounds/correct.mp3',
+        function () { console.log("playAudio():Audio Success"); },
+        function (err) { console.log("playAudio():Audio Error: " + err); }
+    );
+    */
+}
+
+document.addEventListener('deviceready', deviceready, false);

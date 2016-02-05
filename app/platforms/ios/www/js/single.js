@@ -1,0 +1,170 @@
+var textInput = document.getElementById('#commenttxt');
+var screen_single = $("#screen_single");
+
+screen_single.wrapper = screen_single.find('wrapper');
+screen_single.show = function(){screen_single.removeClass('righted');};
+screen_single.hide = function(){
+	screen_single.wrapper.html("");
+	screen_single.addClass('righted');
+};
+
+function show_single(op,id){
+	console.log(op+" "+id);
+	if(op) {
+    	screen_single.removeClass("righted");
+        screen_single.wrapper.html('<br><br><img width="10%" style="margin: 0 auto; display: block;" src="img/loader.gif"/><br><br>');
+        $.ajax({
+            url: urlws,
+            dataType: 'text',
+            type: 'post',
+            data: {
+                action: 	'get_single',
+                app: 		cat_name,
+                user_login: user_login,
+            	user_pass: 	user_pass,
+                post_id: 	id,
+                timeOffset: timeOffset
+            },
+            success: function(a,b,c){
+                screen_single.wrapper.html(a);
+            },
+            error: function(a,b,c){
+                console(b+' '+c);
+            },
+            complete: function(a,b,c){
+            	
+                screen_single.comments = screen_single.find('comments');
+            
+                screen_single.wrapper.find(".button_share").click(function(){
+                    var img_url = $(this).data('share');
+                    if(img_url==""){
+                        var id = $(this).data('id');
+                        img_url = $("#content"+id).text();
+                        window.plugins.socialsharing.share(img_url);
+                    }else{
+                        window.plugins.socialsharing.share(null,null,img_url,add_points('share'),function(){ console.log('no lo bajo');});
+                    }
+                    return false;
+                });
+                screen_single.wrapper.find(".button_like").click(function(){
+                    return false;
+                });
+                screen_single.wrapper.find("iframe").each(function(){
+                    var dis = $(this);
+                    dis.attr('width',"100%");
+                    dis.attr('height',jQuery(window).width()*0.8);
+                });
+                if(hago_scroll){
+               		screen_single.wrapper.animate(
+                    	{
+               				scrollTop: jQuery(screen_single.wrapper).height()
+                    	},
+                        1000,
+                        null
+                    );
+               		jQuery(".input_comment").focus();
+               		hago_scroll = false;
+                }
+            }
+        });
+    }else {
+    	screen_single.addClass("righted");
+    }
+}
+
+var new_comment = null;
+function send_comment(){
+	if($("#loading_comment").length > 0) return false;
+	var comment = jQuery(".input_comment").val();
+    var post_id = jQuery(".input_comment").data('post_id');
+    if(comment=="")return false;
+    new_comment = jQuery('<comment id="loading_comment" data-id=""><br><br><img width="10%" style="margin: 0 auto; display: block;" src="img/loader.gif"/><br><br></comment>');
+    screen_single.comments.prepend(new_comment);
+	$.ajax({
+    	url: urlws,
+        dataType: 'text',
+        type: 'post',
+        data: {
+        	action: 	'comment_post',
+            app: 		cat_name,
+            user_login: user_login,
+            user_pass: 	user_pass,
+            comment: 	comment+"||||||||||||||",
+            post_id: 	post_id,
+            timeOffset: timeOffset
+        },
+        success: function(a,b,c){
+        	console.log(JSON.stringify(a));
+            new_comment.remove();
+            new_comment = null;
+            if(jQuery(".no-comments").length > 0){
+           		jQuery(".no-comments").remove();
+            }
+        	screen_single.comments.prepend(a);
+            var button = jQuery('post[data-id="'+post_id+'"]').find('.button_comment');
+            var val = parseInt(button.html());
+           	val++;
+            button.html(val);
+            screen_single.wrapper.animate(
+                {
+                    scrollTop: jQuery("comments").scrollTop()
+                },
+                1000,
+                function(){
+                    screen_single.find('textarea').focus();
+                }
+            );
+        },
+        error: function(a,b,c){
+        	console.log(b+' '+c);
+        },
+        complete: function(a,b,c){
+           	jQuery(".input_comment").val('');
+        }
+    });
+
+}
+
+function remove_comment(id_post){
+	victim = id_post;
+    navigator.notification.confirm(
+    	'¿Deseas borrar este comentario?',
+        function(btn){
+        	if(btn==1){
+            	jQuery("#comment-"+victim).fadeOut();
+            	jQuery.ajax({
+                    url: urlws,
+                    dataType: 'text',
+                    type: 'post',
+                    data: {
+                        action: 	'remove_comment_ws',
+                        app: 		cat_name,
+                        user_login: user_login,
+                        user_pass: 	user_pass,
+                        timeOffset: timeOffset,
+                        comment_id: victim
+                    },
+                    success: function(a,b,c){
+                    	if(a=="ok") {
+                        	var pid = jQuery("#comment-"+victim).data('post_id');
+                            console.log(pid);
+                        	jQuery("#comment-"+victim).remove();
+                            var button_comment = jQuery(pid).find(".button_comment");
+                            var val = parseInt(button_comment.html());
+                            val--;
+                            button_comment.html(val);
+                        }else jQuery("#comment-"+victim).fadeIn();
+                    },
+                    error: function(a,b,c){
+                        console.log(b+' '+c);
+                    },
+                    complete: function(a,b,c){
+                    	victim = null;
+                    }
+                });
+            }
+        },
+        'La Voz de Dios',
+        ['Si','No']
+    );
+}

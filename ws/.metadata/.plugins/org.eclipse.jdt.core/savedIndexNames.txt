@@ -1,0 +1,6 @@
+INDEX VERSION 1.126+/Users/pizotesoft/Documents/clientes/Celumanix/La voz de Dios/ws/.metadata/.plugins/org.eclipse.jdt.core
+1379582071.index
+141972899.index
+2669550971.index
+2425580837.index
+4000049646.index
