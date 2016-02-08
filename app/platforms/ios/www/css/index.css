@@ -305,7 +305,7 @@ wrapper{
     background-color:#f4f4f4;
     overflow: auto;
     padding-bottom: 20px;
-   /* -webkit-overflow-scrolling: touch;*/ /*MAKES OVERFLOWN OBJECTS HAVE INERTIA SCROLLING*/
+    -webkit-overflow-scrolling: touch; /*MAKES OVERFLOWN OBJECTS HAVE INERTIA SCROLLING*/
 }
 
 /*las que salen de abajo*/
