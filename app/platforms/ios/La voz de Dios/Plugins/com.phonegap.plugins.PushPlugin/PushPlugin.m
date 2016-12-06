@@ -45,16 +45,8 @@
 
 - (void)register:(CDVInvokedUrlCommand*)command;
 {
-    
-    self.callbackId = command.callbackId;
-    /*
-    UIRemoteNotificationType types = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-	if (types == UIRemoteNotificationTypeNone) {
-    	[self failWithMessage:@"No estan activadas estas cosas" withError:nil];
-        return;
-    }
-    */
-	
+	self.callbackId = command.callbackId;
+
     NSMutableDictionary* options = [command.arguments objectAtIndex:0];
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
@@ -81,6 +73,7 @@
         UserNotificationTypes |= UIUserNotificationTypeBadge;
 #endif
     }
+
     if ([soundArg isKindOfClass:[NSString class]])
     {
         if ([soundArg isEqualToString:@"true"]) {
@@ -117,15 +110,11 @@
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
     UserNotificationTypes |= UIUserNotificationActivationModeBackground;
 #endif
-	
+
     self.callback = [options objectForKey:@"ecb"];
 
-    if (notificationTypes == UIRemoteNotificationTypeNone){
-    	NSLog(@"PushPlugin.register: Push notification type is set to none");
-    	[self failWithMessage:@"No estan activadas estas cosas" withError:nil];
-        return;
-    }
-    
+    if (notificationTypes == UIRemoteNotificationTypeNone)
+        NSLog(@"PushPlugin.register: Push notification type is set to none");
 
     isInline = NO;
 
@@ -135,30 +124,26 @@
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
         [[UIApplication sharedApplication] registerForRemoteNotifications];
     } else {
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
+    		[[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
     }
 #else
 		[[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
 #endif
-    
-	if (notificationMessage){			// if there is a pending startup notification
+
+	if (notificationMessage)			// if there is a pending startup notification
 		[self notificationReceived];	// go ahead and process it
-        NSLog(@"entra aqui");
-    }
-    
-    UIRemoteNotificationType type = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-    NSString *jsStatement = [NSString stringWithFormat:@"navigator.PushPlugin.isEnabled = %d;", type != UIRemoteNotificationTypeNone];
-    NSLog(@"JSStatement %@",jsStatement);
-    
 }
 
+/*
 - (void)isEnabled:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options {
     UIRemoteNotificationType type = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
     NSString *jsStatement = [NSString stringWithFormat:@"navigator.PushPlugin.isEnabled = %d;", type != UIRemoteNotificationTypeNone];
     NSLog(@"JSStatement %@",jsStatement);
 }
+*/
 
 - (void)didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+
     NSMutableDictionary *results = [NSMutableDictionary dictionary];
     NSString *token = [[[[deviceToken description] stringByReplacingOccurrencesOfString:@"<"withString:@""]
                         stringByReplacingOccurrencesOfString:@">" withString:@""]
@@ -201,6 +186,7 @@
         [results setValue:dev.name forKey:@"deviceName"];
         [results setValue:dev.model forKey:@"deviceModel"];
         [results setValue:dev.systemVersion forKey:@"deviceSystemVersion"];
+
 		[self successWithMessage:[NSString stringWithFormat:@"%@", token]];
     #endif
 }
@@ -212,7 +198,7 @@
 
 - (void)notificationReceived {
     NSLog(@"Notification received");
-	
+
     if (notificationMessage && self.callback)
     {
         NSMutableString *jsonStr = [NSMutableString stringWithString:@"{"];

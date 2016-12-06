@@ -117,7 +117,7 @@ button{
 }
 
 button:active{
-	
+	opacity: 0.3;
 }
 
 button.explicito{
@@ -168,7 +168,7 @@ input{
     margin: 0 auto;
     padding-left: 45px;
 }
-
+h2 {font-size: 1.2em!important;}
 /*partes del app*/
 
 header{
@@ -208,21 +208,26 @@ footer table tr{
 footer table td{
 	width: 20%;
     height: 50px;
-    vertical-align: middle;
+    vertical-align: bottom;
     padding: 0;
 }
 
 footer table td .button_footer{
 	background-size: auto 100px;
     background-color: transparent;
-    background-position: center 0px;
+    background-position: center -10px;
     background-repeat: no-repeat;
     overflow: hidden;
     height: 50px;
+    
+    color: #00adff;
+    font-size: 12px;
+    line-height: 77px
 }
 
 footer table td .button_footer.selected{
-	background-position: center -50px;
+	background-position: center -60px;
+    color:#fae27e;
 }
 
 footer table td .button_footer:active{
@@ -236,7 +241,7 @@ footer table td:nth-child(2) .button_footer{
 	background-image: url('../img/footer/icon-trivia.png');
 }
 footer table td:nth-child(3) .button_footer{
-	background-image: url('../img/footer/icon-publish.png');
+	background-image: url('../img/footer/icon-perfil-lvd.png');
 }
 footer table td:nth-child(4) .button_footer{
 	background-image: url('../img/footer/icon-promos.png');
@@ -244,12 +249,12 @@ footer table td:nth-child(4) .button_footer{
 footer table td:nth-child(5) .button_footer{
 	background-image: url('../img/footer/icon-config.png');
 }
-
+/*
 footer table td:nth-child(3) .button_footer:active,
 footer table td:nth-child(5) .button_footer:active{
 	background-color: transparent !important;
     background-position: center -50px !important;
-}
+}*/
 
 .button_footer{
 	display: block;
@@ -309,11 +314,9 @@ wrapper{
 }
 
 /*las que salen de abajo*/
-
+/*#screen_perfil */
 #screen_single,
 #screen_config,
-#screen_perfil,
-#screen_perfil_ext,
 #screen_write,
 #screen_consuelo,
 #screen_login,
@@ -343,22 +346,31 @@ wrapper{
 	z-index: 27 !important;
     top: 20px;
 }
-
+#screen_registro wrapper select{
+	width: 90%;
+    height: 45px;
+    border-radius: 0 !important; 
+    border: 1px solid #ccc;
+    display: block;
+    margin: 0 auto;
+    padding-left: 45px;
+    color:#ccc;
+}
 #screen_perfil{
-    z-index: 31 !important;
+    z-index: 20 !important;
 }
 #screen_acercade,
 #screen_faqs,
 #screen_falla,
 #screen_sugerencia,
 #screen_reglamento,
-#screen_perfil_ext,
 #screen_varios{
 	z-index: 32 !important;
 }
-
+#screen_perfil_ext{
+    z-index: 33!important;
+}
 #screen_ayuda,
-#screen_perfil_ext,
 #screen_single_grupo{
 	z-index: 30 !important;
     top: 20px;
@@ -797,9 +809,8 @@ content{
 }
 
 /*CONFIGURACION*/
-
-#screen_config,
-#screen_perfil{
+/*#screen_perfil*/
+#screen_config{
 	bottom: 0px;
     z-index: 22;
 }
@@ -866,7 +877,7 @@ content{
 }
 
 #screen_info screen_title{
-    background-color: lightsalmon !important;
+    background-color: transparent !important;
     border-radius: 40px;
     color: white;
     display: block;
@@ -874,7 +885,7 @@ content{
     left: 3px;
     line-height: 40px;
     right: auto;
-    top: 50px;
+    top: 10px;
     width: 40px !important;
     z-index: 40px;
 }
@@ -932,6 +943,62 @@ content{
     text-align: right !important;                                
 }
 
+/*SECCION DE AYUDA */
+#screen_ayuda wrapper button{
+    width: 100%;
+    height: 40px;
+    border: none;
+    margin-bottom: 5px;
+    text-align: left;
+    padding-left: 10px;
+    background: white url('../img/rarr.png') 90% 10px/10px no-repeat;
+}
+#screen_ayuda wrapper button:active{
+    opacity: 0.3;
+}
+#screen_falla #div_radio_falla{
+    width: 100%;
+    height:6px;
+}
+#screen_falla #div_texto_falla{
+    float:left;
+    width:87%;
+    margin-left:5px;
+}
+#screen_falla wrapper div div div input[type="radio"]{
+    float:left;
+    width: 20px;
+    height: 20px;
+    padding:0!important;
+    margin:2px 0 0 2px!important;
+}
+#screen_falla wrapper div div textarea,
+#screen_sugerencia wrapper div div textarea{
+    margin-top:30px !important;
+    width:100%;
+    min-height:96px;
+}
+#form_falla{
+    
+    height:90%;
+    min-height:316px;
+}
+#opciones_fallas{
+    background-color:white;
+    height:50%;
+    border-radius:5px;
+    padding: 1px;
+	min-height:173px;
+}
+#screen_falla wrapper #div_form_falla{
+    height:80%;
+}
+#enviar_falla,#enviar_sugerencia{
+    width:45%!important;
+    text-align: -webkit-center;
+}
+/*TERMINA SECCION AYUDA */
+
 /*SCREEN CONSUELO*/
 #screen_consuelo{
 	bottom: 0px !important;
@@ -953,6 +1020,7 @@ content{
     text-align: center;
     font-weight: bold;
     line-height: 50px;
+    z-index:50;
 }
 
 .add_grupo{
@@ -1013,7 +1081,31 @@ content{
 .button_publish:active{
 	opacity: 0.5;
 }
+input[name="denun"],
+input[name="inap"],
+input[name="pol"],
+input[name="irrel"]{
+	width:12px!important;
+	height:13px!important;
+	float:none!important;
+	display:inline!important;
+	margin:4px 10px 0 !important;
+}
 
+.screen_write_button{
+
+	width: 80px;
+    height: 80px;
+    position: fixed;
+    bottom: 65px;
+    z-index:40;
+    right: 15px;
+    background-color: transparent;
+    background-image: url('../img/footer/icon-publish.png');
+    background-position: center 0px;
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+}
 #screen_write{
 	bottom: 0 !important;
     z-index: 22;
@@ -1077,7 +1169,7 @@ button.respuesta{
 }
 
 button.respuesta:active{
-	background-color: #fae27e !important;
+	background-color: #9adffe  !important;
 }
 
 
@@ -1157,9 +1249,15 @@ scroller{
 .slide_ img{
     display: block;
     margin: 0 auto;
-    width: 100%;
+    /*width: 100%;*/
 }
-
+@media screen and (max-width: 320px) {
+    .slide_ img{
+    display: block;
+    margin: 0 auto;
+    width: 90%;
+    }
+}
 .loading{
 	background: white url('../img/loader.gif') no-repeat center center !important;
     background-size: auto 30px !important;

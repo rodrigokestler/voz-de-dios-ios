@@ -1,12 +1,15 @@
 var screen_varios = $("#screen_varios");
 screen_varios.wrapper = screen_varios.find('wrapper');
-screen_varios.show = function(){focus_trivia = false; screen_varios.removeClass('downed');};
+screen_varios.show = function(){	
+	focus_trivia = false; 
+	screen_varios.removeClass('downed');
+	screen_to_hide.push(screen_varios);
+};
 screen_varios.hide = function(){
 	screen_varios.title.html('<button class="close_window" onclick="screen_varios.hide();">x</button>');
     screen_varios.wrapper.html('');
 	focus_trivia = true;
-    screen_varios.addClass('downed');
-    
+    screen_varios.addClass('downed');    
 };
 
 
@@ -26,6 +29,7 @@ screen_varios.input.keyup(function(){
     var data = 	{
                     action: 'search_followers',
                     app: 'La voz de Dios',
+                    pais: pais,
                     timeOffset: timeOffset,
                     id_user: user_id_search,
                     s: val,
@@ -74,6 +78,7 @@ function show_followers(id_user){
         data: {
         	action: 'get_followers',
             app: 'La voz de Dios',
+            pais: pais,
             user_login: user_login,
             user_pass: user_pass,
             timeOffset: timeOffset,
@@ -105,6 +110,7 @@ function show_following(id_user){
         data: {
         	action: 'get_following',
             app: 'La voz de Dios',
+            pais: pais,
             user_login: user_login,
             user_pass: user_pass,
             timeOffset: timeOffset,
@@ -133,7 +139,8 @@ function show_friends_search(){
         { fields: 'installed' },
         function(response) {
             if (response.error) {
-           	screen_varios.wrapper.html('');
+            	console.log("error amigos facebok: "+JSON.stringify(response))
+            	screen_varios.wrapper.html('');
             } else {
                 var fb_friends = [];
 		//recorro la respuesta de Facebook y guardo los id’s de facegook en el arreglo fb_friends vienen en formato 12348764538.
@@ -142,14 +149,14 @@ function show_friends_search(){
                     fb_friends.push(val.id);
                 });
            
-           
+           	console.log(fb_friends);
            	//si viene vacío muestro en la pantalla que no hay mara.
                 if(fb_friends.length == 0){
            	screen_varios.wrapper.html('<br><br><p style="text-align: center;">No se encontraron amigos</p>');
                     return true;
                 }
            
-                console.log(fb_friends);
+                
            
 		//ejecuto la función que mira los amigos esta en functions-movil de LVD.
                 jQuery.ajax({
@@ -158,7 +165,7 @@ function show_friends_search(){
                     type: 'post',
                     data: {
                         action: 'get_already_friends_lvd',
-                        app: 'Zona Cristiana',
+                        app: 'La voz de Dios',
                         user_login: user_login,
                         user_pass: user_pass,
                         timeOffset: timeOffset,
@@ -166,6 +173,7 @@ function show_friends_search(){
                     },
                     success: function(a,b,c){
                         screen_varios.wrapper.html(a);
+                        
                     },
                     error: function(a,b,c){
                         screen_varios.wrapper.html('<br><br><p style="text-align: center;">Ocurrio un imprevisto, intenta de nuevo.</p>');

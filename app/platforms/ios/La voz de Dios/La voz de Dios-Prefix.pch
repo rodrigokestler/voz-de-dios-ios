@@ -17,7 +17,7 @@
  under the License.
  */
 //
-// Prefix header for all source files of the 'La voz de Dios' target in the 'La voz de Dios' project
+// Prefix header for all source files of the 'La Voz de Dios' target in the 'La Voz de Dios' project
 //
 
 #ifdef __OBJC__

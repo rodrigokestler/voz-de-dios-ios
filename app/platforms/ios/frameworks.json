@@ -1,0 +1,15 @@
+{
+    "MessageUI.framework": 2,
+    "SystemConfiguration.framework": 2,
+    "CFNetwork.framework": 1,
+    "Security.framework": 2,
+    "libsqlite3.dylib": 1,
+    "Social.framework": 2,
+    "Accounts.framework": 1,
+    "AdSupport.framework": 1,
+    "ImageIO.framework": 1,
+    "CoreLocation.framework": 2,
+    "AddressBook.framework": 1,
+    "AddressBookUI.framework": 1,
+    "AudioToolbox.framework": 2
+}

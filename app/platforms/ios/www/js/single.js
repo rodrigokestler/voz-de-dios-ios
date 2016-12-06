@@ -1,28 +1,32 @@
-var textInput = document.getElementById('#commenttxt');
 var screen_single = $("#screen_single");
-
 screen_single.wrapper = screen_single.find('wrapper');
-screen_single.show = function(){screen_single.removeClass('righted');};
+screen_single.show = function(){
+	screen_single.removeClass('righted');	
+	screen_to_hide.push(screen_single);		
+};
 screen_single.hide = function(){
 	screen_single.wrapper.html("");
 	screen_single.addClass('righted');
 };
 
+var textInput = document.getElementById('#commenttxt');
+
 function show_single(op,id){
 	console.log(op+" "+id);
 	if(op) {
-    	screen_single.removeClass("righted");
+		screen_single.show();
         screen_single.wrapper.html('<br><br><img width="10%" style="margin: 0 auto; display: block;" src="img/loader.gif"/><br><br>');
         $.ajax({
             url: urlws,
             dataType: 'text',
             type: 'post',
             data: {
-                action: 	'get_single',
-                app: 		cat_name,
+                action: 'get_single',
+                app: 'La voz de Dios',
                 user_login: user_login,
-            	user_pass: 	user_pass,
-                post_id: 	id,
+            	user_pass: user_pass,
+                post_id: id,
+	            pais: pais,
                 timeOffset: timeOffset
             },
             success: function(a,b,c){
@@ -63,12 +67,13 @@ function show_single(op,id){
                         null
                     );
                		jQuery(".input_comment").focus();
+               		SoftKeyboard.show();
                		hago_scroll = false;
                 }
             }
         });
     }else {
-    	screen_single.addClass("righted");
+    	screen_single.hide();
     }
 }
 
@@ -85,12 +90,13 @@ function send_comment(){
         dataType: 'text',
         type: 'post',
         data: {
-        	action: 	'comment_post',
-            app: 		cat_name,
+        	action: 'comment_post',
+            app: 'La voz de Dios',
             user_login: user_login,
-            user_pass: 	user_pass,
-            comment: 	comment+"||||||||||||||",
-            post_id: 	post_id,
+            user_pass: user_pass,
+            comment: comment+"||||||||||||||",
+            post_id: post_id,
+            pais: pais,
             timeOffset: timeOffset
         },
         success: function(a,b,c){
@@ -112,6 +118,7 @@ function send_comment(){
                 1000,
                 function(){
                     screen_single.find('textarea').focus();
+                    SoftKeyboard.show();
                 }
             );
         },
@@ -137,10 +144,11 @@ function remove_comment(id_post){
                     dataType: 'text',
                     type: 'post',
                     data: {
-                        action: 	'remove_comment_ws',
-                        app: 		cat_name,
+                        action: 'remove_comment_ws',
+                        app: 'La voz de Dios',
                         user_login: user_login,
-                        user_pass: 	user_pass,
+                        user_pass: user_pass,
+                        pais: pais,
                         timeOffset: timeOffset,
                         comment_id: victim
                     },

@@ -1,44 +1,77 @@
-//globales
-var $ = jQuery;
-
-var urlws = 'http://lvd.pizotesoft.com/';
-var app_name = 'Voz de Dios';
-var cat_name = 'La voz de Dios';
-var url_share = 'http://lvd.pizotesoft.com/';
-
 var timeOffset = 0;
 var recordatorio = 0;
+var screen_to_hide = [];
 var scroll_suscripcion = false;
-var cur_screen = "#screen_timeline";
 
 function recordatorio_fn(){
 	if(user_data==null || user_data==undefined || user_data=={}) return false;
 	var re = window.localStorage.getItem("recordatorio");
 	if(re==null){
-        var re = new Date();
-            re.setDate(re.getDate()+1);
-            window.localStorage.setItem("recordatorio",re.getTime());
+		var re = new Date();
+        re.setDate(re.getDate()+1);
+        window.localStorage.setItem("recordatorio",re.getTime());
     }else{
     	var now = new Date().getTime();
 		var diff = (now-re)/1000*60*60*24;
         if(diff >= 1){
-        	show_recordatorio();
+        	//show_recordatorio();
+        	var timeout_recordatorio = setTimeout(show_recordatorio,120000);
         }
     }
+	onResume();
+}
+
+var ajax_resume = null;
+function onResume() {
+	console.log("resume");
+	
+	if(user_login!='' && user_pass !=''){
+		if(ajax_resume==null){
+			ajax_resume = $.ajax({
+	            url: urlws,
+	            dataType: 'html',
+	            type: 'post',
+	            data: {
+	                action: 'last_activity',
+	                user_login: user_login,
+	                user_pass: user_pass,
+	                app: 'La voz de Dios'
+	            },
+	            success: function(a,b,c){
+	                console.log("last activity: "+a);
+	                if(a=='1'){
+	                	//window.localStorage.setItem('estado','premium');
+	                	user_estado = 'premium';
+	                }else{
+	                	//window.localStorage.setItem('estado','freemium');
+	                	user_estado = 'freemium';
+	                }
+	            },
+	            error: function(a,b,c){
+	                console.log(b+' '+c);
+	            },
+	            complete: function(a,b,c){
+	            	ajax_resume = null;
+	            }
+	        });
+		}
+	}
+	
 }
 
 function mostrar_diapositivas_gratis(){
 	var re = window.localStorage.getItem("fremium"+user_login);
+	//re = null;
     if(re==null){
         show_info('freemium');
         window.localStorage.setItem("fremium"+user_login,'ya');
     }
-    console.log('pasa por aqui');
+    
 }
 
-function show_recordatorio(){
+function show_recordatorio(){		
 	navigator.notification.confirm(
-        '¿Te gustaría compartir ahora VOZ DE DIOS con algún contacto?',
+        '¿Te gustaría compartir ahora VOZ DE DIOS con algún amigo? Gana 3 puntos por cada invitación realizada',
         function onConfirm(buttonIndex) {
             if(buttonIndex==1){
                 invite();
@@ -46,80 +79,29 @@ function show_recordatorio(){
             var re = new Date();
             re.setDate(re.getDate()+1);
             window.localStorage.setItem("recordatorio",re.getTime());
-        },            // callback to invoke with index of button pressed
-        'Voz de Dios',           // title
-        ['Sí, vamos','Cancelar']     // buttonLabels
+        },
+        'Voz de Dios',
+        ['Sí, vamos','Cancelar']
     );
 }
 
-function show_screen(screen){
-	var misma = false;
-	if(cur_screen==screen) {
-    	misma = true;
-    }else{
-    	cur_screen = screen;
-    }
-
-	$("screen").each(function(){
-    	var dis = $(this);
-        if(dis.hasClass("no_normal")) return true;
-        if(!dis.hasClass("hidden")) dis.addClass("hidden");
-    });
-    
-    $(screen).removeClass("hidden");
-    $(".button_footer.selected").removeClass("selected");
-    
-    if(screen=="#screen_trivia"){
-    	$("#b1").addClass("selected");
-    	if(!misma) get_trivia();
-    }else if(screen=="#screen_timeline"){
-    	$("#b0").addClass("selected");
-    	if(misma) {
-        	get_feeds();
-        	offset = 0;
-        }
-    }else if(screen=="#screen_promos"){
-    	$("#b3").addClass("selected");
-    	if(misma) get_promos();
-    }
-    
-}
-
-function on_load(img){
-	var i = $(img);
-    i.attr('style','opacity: 1;');
-    i.parent().parent().css('background-image','none');
-}
-
-function add_points(op){
-	console.log(op);
-	$.ajax({
-        url: urlws,
-        dataType: 'html',
-        type: 'post',
-        data: {
-            action: 	'add_points',
-            app: 		cat_name,
-            op: 		op,
-            user_login: user_login,
-            user_pass: 	user_pass,
-            timeOffset: timeOffset
-        },
-        success: function(a,b,c){
-        },
-        error: function(a,b,c){
-            console.log(b+' '+c);
-        },
-        complete: function(a,b,c){
-        	console.log();
-        }
-    });
-
+function backbutton(){
+	if(screen_to_hide.length > 0){		
+		screen_to_hide.pop().hide();
+		SoftKeyboard.hide();
+		return false;
+	}	
+	console.log(screen_login[0].outerHTML);	
+	if(screen_login.hasClass('lefted')) {
+		cordova.exec(function() {}, function(){}, 'Home', 'goHome', []);
+		return false; 		
+	}
+	navigator.app.exitApp();
+	return false;
 }
 
 function deviceready() {
 	
-
 	var d = new Date()
 	var n = d.getTimezoneOffset()/60;
 	timeOffset = parseInt(n*-1);
@@ -128,41 +110,15 @@ function deviceready() {
 	window.onerror = function(message, url, lineNumber) {
         console.log("Error: "+message+" in "+url+" at line "+lineNumber);
     }
-    
+	
     document.addEventListener('resume', recordatorio_fn, false);
-    
+    document.addEventListener('backbutton', backbutton, false);    
 	
     FastClick.attach(document.body);
-    
-    //FB.init({ appId: "825295254244111", nativeInterface: CDV.FB, useCachedDialogs: false });    
     pushNotification = window.plugins.pushNotification;
-    setPushes();
-    
-    return true;
-    
-    var el = document.getElementById('screen_timeline');
-    swipedetect(el, function(swipedir){
-        if (swipedir =='right') screen_config.show();
-        else if (swipedir == 'left') screen_config.hide();
-    });
-    
-    el = document.getElementById('screen_config');
-    swipedetect(el, function(swipedir){
-        if (swipedir =='right') screen_config.show();
-        else if (swipedir == 'left') screen_config.hide();
-    });
-    
-    el = document.getElementById('screen_trivia');
-    swipedetect(el, function(swipedir){
-        if (swipedir =='right') screen_config.show();
-        else if (swipedir == 'left') screen_config.hide();
-    });
-    
-    el = document.getElementById('screen_single');
-    swipedetect(el, function(swipedir){
-        if (swipedir =='right') screen_config.show();
-        else if (swipedir == 'left') screen_config.hide();
-    });
-    
+    setPushes();   
+    agregar_options();
+  
 }
+
 document.addEventListener('deviceready', deviceready, false);

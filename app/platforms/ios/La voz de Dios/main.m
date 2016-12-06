@@ -18,7 +18,7 @@
  */
 //
 //  main.m
-//  La voz de Dios
+//  La Voz de Dios
 //
 //  Created by ___FULLUSERNAME___ on ___DATE___.
 //  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
